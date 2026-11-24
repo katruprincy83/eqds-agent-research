@@ -1,7 +1,8 @@
 # Standalone bundle for the GIC research agent: its own repo, its own deploy, no dependency on the orchestrator's bundle.
 # It creates ONE Databricks App. The app name follows the platform convention `<prefix>-sp-<key><suffix>`, which is how the
-# orchestrator's registration finds it. Platform values below were filled in by the platform's scripts/new_agent.py for
-# the demo environment; ask the platform team for the values of other environments.
+# orchestrator's registration finds it. The variable defaults and the `targets:` block were filled in by the platform's
+# scripts/new_agent.py from the environments it knows: `demo` is production (git branch main), `dev` is the pre-production
+# environment (git branch dev; app `-dev`, experiment in /Shared/eqds-dev, traces in eqds_dev). Both are in one workspace.
 bundle:
   name: eqds-agent-research
 
@@ -13,7 +14,7 @@ variables:
   platform_target: {default: demo}                     # which platform environment the agent plugs into (config/env/<target>.yaml)
   app_name:        {default: eqds-sp-research}          # <name_prefix>-sp-<key><suffix>
   warehouse_id:    {default: f7a5b7b9269b9c8d}             # platform SQL warehouse (tool calls run on it)
-  experiment_path: {default: "/Shared/eqds/demo-research"}   # this agent's own MLflow experiment (traces); sibling of the platform experiment
+  experiment_path: {default: "/Shared/eqds/demo-research"}   # this agent's own MLflow experiment (traces); sibling of the platform experiment, per target
   registrar_sp:    {default: 665cb5f3-b52e-4050-988b-91c87dfb3385}   # registrar service principal: manages the app during registration
   ui_sp:           {default: 24bd67da-6ac4-4e91-8b6a-8de714b6f47b}   # UI service principal: runs the registration contract check
   moderator_sp:    {default: 2cccd2cc-8545-46d6-8c59-27f11c26b93e}   # moderator service principal: calls the agent at run time
@@ -42,6 +43,7 @@ resources:
           - {name: DATABRICKS_WAREHOUSE_ID, value_from: warehouse}
           - {name: MLFLOW_DISABLE_AGENT_HINT, value: "1"}
           - {name: SPECIALIST_CONFIG, value: agents/specialists/research/specialist.yaml}
+          - {name: EQDS_MEMORY_READERS, value: "${var.ui_sp}"}   # the agent grants the UI read access to its own memory schema
       resources:
         - name: experiment
           experiment: {experiment_id: "${resources.experiments.traces.id}", permission: CAN_MANAGE}
@@ -59,3 +61,14 @@ targets:
     default: true
     workspace:
       host: https://dbc-6ab9fd5d-c871.cloud.databricks.com
+  dev:
+    workspace:
+      host: https://dbc-6ab9fd5d-c871.cloud.databricks.com
+    variables:
+      platform_target: dev
+      app_name: eqds-sp-research-dev
+      warehouse_id: f91a1d5e89375b69
+      experiment_path: "/Shared/eqds-dev/eqds-research"
+      registrar_sp: a22a69d2-3acb-4cb7-ad65-4bacfcefae1c
+      ui_sp: 7780aa50-7f8c-4540-ac8a-8991e0c91d85
+      moderator_sp: 4e7a5634-fdb1-4458-ac4d-3546a848e272

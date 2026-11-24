@@ -14,15 +14,16 @@ skill:
   name: research
   version: 0.9.0
 tools:
-- type: bridge_mcp
+- type: external
   allow:
   - research_views
   - research_notes_search
 - type: uc_functions
   allow:
   - company_lookup
-tools_summary: Bridge MCP · research_* → Azure SQL (in place)
+tools_summary: External data · research_* → Azure SQL (in place)
 access:
+  foreign: true               # reads azure_oms through the federated catalog under this app's own grants
   tables:
   - ref_companies
   functions:
@@ -30,7 +31,6 @@ access:
   volumes:
   - skills
   - prompts
-uses_bridge: true
 max_tool_calls: 8
 timeout_s: 150
 contract_version: '1'
