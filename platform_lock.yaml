@@ -1,4 +1,4 @@
-platform_commit: 2850e567f9e216cef13f52a2761240518b9f5963
+platform_commit: 57ead9b3c7022cb1d7a09d3a79f8222750db531e
 runtime:
 - packages/eqds_agentkit/eqds_agentkit
 - packages/eqds_llm/eqds_llm
