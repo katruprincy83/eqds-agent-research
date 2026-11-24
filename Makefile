@@ -1,6 +1,6 @@
 # make deploy        build ./app from the platform runtime + agent/, deploy the bundle, start the app
 # make smoke         check /healthz and /info of the deployed app (add Q="question" for one real call)
-PLATFORM ?= ../eqds-agents
+PLATFORM ?= runtime
 TARGET ?= demo
 PY ?= python3
 Q ?=

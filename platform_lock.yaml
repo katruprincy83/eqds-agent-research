@@ -1,0 +1,12 @@
+platform_commit: 155509c743c025def4372eab3fc7f56b4a804cdf
+runtime:
+- packages/eqds_agentkit/eqds_agentkit
+- packages/eqds_llm/eqds_llm
+- apps/__init__.py
+- apps/common.py
+- agents/__init__.py
+- agents/specialist_base
+- prompts
+- scripts/build_apps.py
+- config/env
+- config/models.*.yaml
